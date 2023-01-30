@@ -24,16 +24,21 @@ handleProducts.get("/category", async (req, res, next) => {
 // Get Products
 handleProducts.get("/:category", async (req, res, next) => {
   try {
-    const category = req.query.category;
+    const category = req.params.category;
+    console.log(category);
     let filter = {};
     if (category === "all") {
-      const result = await productCollection.find({}).toArray();
+      const result = await productCollection
+        .find({})
+        .sort({ price: 1 })
+        .toArray();
+      res.status(200).send(result);
+    } else {
+      filter = { category: category };
+      console.log(filter);
+      const result = await productCollection.find(filter).toArray();
       res.status(200).send(result);
     }
-    filter = { category: category };
-    console.log(filter);
-    const result = await productCollection.find(filter).toArray();
-    res.status(200).send(result);
   } catch (error) {
     console.log(error);
     next();
