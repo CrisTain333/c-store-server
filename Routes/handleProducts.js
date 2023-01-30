@@ -30,7 +30,7 @@ handleProducts.get("/:category", async (req, res, next) => {
     if (category === "all") {
       const result = await productCollection
         .find({})
-        .sort({ price: 1 })
+
         .toArray();
       res.status(200).send(result);
     } else {
