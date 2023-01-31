@@ -45,18 +45,4 @@ handleProducts.get("/:category", async (req, res, next) => {
   }
 });
 
-// handleProducts.get("/:category", async (req, res) => {
-//   const category = req.query.category;
-//   console.log(category);
-//   const filter = {};
-//   const result = await productCollection.find(filter).toArray();
-//   res.status(200).send(result);
-// });
-
-// handleProducts.get("/:category", async (req, res) => {
-//   const filter = {};
-//   const result = await productCollection.find(filter).toArray();
-//   res.status(200).send(result);
-// });
-
 module.exports = handleProducts;
