@@ -27,7 +27,7 @@ userRoute.post("/", async (req, res, next) => {
 
     const result = await userCollection.insertOne(user);
     if (result.acknowledged) {
-      res.status(200).send(token);
+      res.status(200).send({ status: 200, token: token });
     }
   } catch (error) {
     console.log(error);
