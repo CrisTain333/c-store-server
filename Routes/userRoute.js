@@ -31,7 +31,7 @@ userRoute.post("/", async (req, res, next) => {
     }
   } catch (error) {
     console.log(error);
-    res.status(401).json({ errorMessage: "Auth Fail" });
+    res.status(401).json({ errorMessage: "Authentication failed" });
     next();
   }
 });
