@@ -7,34 +7,45 @@ const client = new MongoClient(uri);
 const cartCollection = client.db("cStore").collection("cart");
 
 handleOrder.post("/", async (req, res, next) => {
-  const carts = req.body;
-  //   const result = await cartCollection.insertOne(cart);
-  const checkAllCart = await cartCollection
-    .find({
-      email: carts.email,
-    })
-    .toArray();
-
-  const checkAllReadyExits = checkAllCart.find(
-    (cart) => cart.productId === carts.productId
-  );
-
-  if (checkAllReadyExits) {
-    const quantity = checkAllReadyExits.productQuantity;
-    console.log(quantity);
-    const filter = { email: checkAllReadyExits.email };
-    const updatedDoc = {
-      $set: {
-        productQuantity: quantity + 1,
-      },
-    };
-    const result = await cartCollection.updateOne(filter, updatedDoc);
-    console.log(result);
-  } else {
-    console.log(false);
+  try {
+    const carts = req.body;
+    const checkAllCart = await cartCollection
+      .find({
+        email: carts.email,
+      })
+      .toArray();
+    const checkAllReadyExits = checkAllCart.find(
+      (cart) => cart.productId === carts.productId
+    );
+    if (checkAllReadyExits) {
+      const quantity = checkAllReadyExits.productQuantity;
+      const filter = { email: checkAllReadyExits.email };
+      const updatedDoc = {
+        $set: {
+          productQuantity: quantity + 1,
+        },
+      };
+      const result = await cartCollection.updateOne(filter, updatedDoc);
+      res.send(result);
+    } else {
+      const result = await cartCollection.insertOne(carts);
+      res.send(result);
+    }
+  } catch (error) {
+    console.log(error);
+    next();
   }
-  //   console.log(checkAllReadyExits);
-  res.send("ok");
+});
+
+handleOrder.get("/:email", async (req, res, next) => {
+  try {
+    const filter = { email: req.params.email };
+    const result = await cartCollection.find(filter).toArray();
+    res.send(result);
+  } catch (error) {
+    console.log(error);
+    next();
+  }
 });
 
 module.exports = handleOrder;
