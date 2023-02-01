@@ -21,7 +21,7 @@ userRoute.post("/", async (req, res, next) => {
       password: hashedPassword,
     };
 
-    const token = jwt.sign({ name }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ email }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
 
@@ -31,7 +31,26 @@ userRoute.post("/", async (req, res, next) => {
     }
   } catch (error) {
     console.log(error);
-    res.status(401).json({ errorMessage: "Auth Fail" });
+    res.status(401).json({ errorMessage: "Authentication failed" });
+    next();
+  }
+});
+
+//Get User
+userRoute.get("/:email", async (req, res, next) => {
+  try {
+    const email = req.params.email;
+    const user = await userCollection.findOne({ email: email });
+    const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+    if (user) {
+      res.status(200).json({ status: 200, token: token, user: user });
+    } else {
+      res.status(404).json({ status: 401, message: "User Not Found" });
+    }
+  } catch (error) {
+    console.log(error);
     next();
   }
 });
