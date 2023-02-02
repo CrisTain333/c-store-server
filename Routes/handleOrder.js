@@ -5,7 +5,7 @@ const { MongoClient, ObjectId } = require("mongodb");
 const uri = "mongodb://localhost:27017";
 const client = new MongoClient(uri);
 const cartCollection = client.db("cStore").collection("cart");
-
+// Add to cart
 handleOrder.post("/", async (req, res, next) => {
   try {
     const carts = req.body;
@@ -37,11 +37,26 @@ handleOrder.post("/", async (req, res, next) => {
   }
 });
 
+// get all cart items
+
 handleOrder.get("/:email", async (req, res, next) => {
   try {
     const filter = { email: req.params.email };
     const result = await cartCollection.find(filter).toArray();
     res.send(result);
+  } catch (error) {
+    console.log(error);
+    next();
+  }
+});
+
+// delete a product
+handleOrder.delete("/delete/:id", async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const filter = { productId: id };
+    const result = await cartCollection.deleteOne(filter);
+    res.status(200).send(result);
   } catch (error) {
     console.log(error);
     next();
