@@ -36,7 +36,6 @@ handleProducts.get("/:category", async (req, res, next) => {
       res.status(200).send(result);
     } else {
       filter = { category: category };
-      console.log(filter);
       const result = await productCollection.find(filter).toArray();
       res.status(200).send(result);
     }
