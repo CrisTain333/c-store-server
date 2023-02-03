@@ -26,7 +26,7 @@ function verifyJwt(req, res, next) {
   });
 }
 
-// Add to cart
+// Add to cart;
 handleOrder.post("/", async (req, res, next) => {
   try {
     const carts = req.body;
