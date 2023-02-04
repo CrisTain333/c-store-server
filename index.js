@@ -10,6 +10,7 @@ require("dotenv").config();
 const productRoute = require("./Routes/handleProducts");
 const userRoute = require("./Routes/userRoute");
 const orderRoute = require("./Routes/handleOrder");
+const paymentRoute = require("./Routes/handlePayment");
 
 // const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@practicebaba.aon4ndq.mongodb.net/?retryWrites=true&w=majority`;
 const uri = "mongodb://localhost:27017";
@@ -26,6 +27,9 @@ app.use("/user", userRoute);
 
 //handle Order & Cart
 app.use("/order", orderRoute);
+
+//Payment Route
+app.use("/payment", paymentRoute);
 
 app.listen(PORT, () => {
   console.log(`Betacom server Running On Port ${PORT} `);
