@@ -20,6 +20,7 @@
     "mongodb": "^4.12.1",
     "nodemon": "^2.0.20",
     "sslcommerz-lts": "^1.1.0",
-    "sslcommerz-nodejs": "^1.0.8"
+    "sslcommerz-nodejs": "^1.0.8",
+    "uniqid": "^5.4.0"
   }
 }
