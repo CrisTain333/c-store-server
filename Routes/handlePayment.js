@@ -8,7 +8,6 @@ const is_live = false;
 const uri = "mongodb://localhost:27017";
 const client = new MongoClient(uri);
 const cartCollection = client.db("cStore").collection("cart");
-const ordersCollection = client.db("cStore").collection("orders");
 const uniqid = require("uniqid");
 handlePayment.post("/init", async (req, res) => {
   const { id, email } = req.body;
@@ -51,15 +50,30 @@ handlePayment.post("/init", async (req, res) => {
     ship_country: "Bangladesh",
   };
   const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
-  sslcz.init(data).then((apiResponse) => {
-    // Redirect the user to payment gateway
+  sslcz.init(data).then(async (apiResponse) => {
     let GatewayPageURL = apiResponse.GatewayPageURL;
-    ordersCollection.insertOne({
-      ...userProduct,
-      totalPrice: total,
-      transactionId,
-      paid: false,
-    });
+    const result = await cartCollection.updateOne(
+      {
+        productId: id,
+        email: email,
+      },
+      {
+        $set: {
+          totalPrice: total,
+          transactionId,
+          paid: false,
+        },
+      }
+    );
+
+    console.log(result);
+
+    // ordersCollection.insertOne({
+    //   ...userProduct,
+    //   totalPrice: total,
+    //   transactionId,
+    //   paid: false,
+    // });
     res.json({ url: GatewayPageURL });
   });
 });
