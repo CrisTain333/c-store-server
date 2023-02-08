@@ -12,9 +12,7 @@ const userCollection = client.db("cStore").collection("user");
 userRoute.get("/:email", async (req, res, next) => {
   try {
     const email = req.params.email;
-    console.log(email);
     const user = await userCollection.findOne({ email: email });
-    console.log(user);
     const token = jwt.sign({ email }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });

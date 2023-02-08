@@ -1,13 +1,18 @@
 const express = require("express");
 const handlePayment = express.Router();
+const { MongoClient, ObjectId } = require("mongodb");
 const SSLCommerzPayment = require("sslcommerz-lts");
 const store_id = process.env.STORE_ID;
 const store_passwd = process.env.STORE_PASSWORD;
 const is_live = false;
-handlePayment.get("/init", async (req, res) => {
-  const id = req.body;
-  console.log(id);
-  res.send({ id: id });
+const uri = "mongodb://localhost:27017";
+const client = new MongoClient(uri);
+const cartCollection = client.db("cStore").collection("cart");
+handlePayment.post("/init", async (req, res) => {
+  const { id } = req.body;
+
+  const userProduct = await cartCollection.findOne({ productId: id });
+  res.send({ product: userProduct });
   // const data = {
   //   total_amount: 100,
   //   currency: "BDT",
