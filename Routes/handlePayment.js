@@ -69,6 +69,7 @@ handlePayment.post("/init", async (req, res) => {
   });
 });
 
+// send Success api  to frontend
 handlePayment.post("/success", async (req, res, next) => {
   const { transactionId } = req.query;
   const date = new Date();
@@ -85,7 +86,6 @@ handlePayment.post("/success", async (req, res, next) => {
       },
     }
   );
-
   if (result.modifiedCount > 0) {
     res.redirect(
       `http://localhost:3000/payment/success?transactionId=${transactionId}`
