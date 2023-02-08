@@ -65,30 +65,32 @@ handlePayment.post("/init", async (req, res) => {
         },
       }
     );
-
-    console.log(result);
-
-    // ordersCollection.insertOne({
-    //   ...userProduct,
-    //   totalPrice: total,
-    //   transactionId,
-    //   paid: false,
-    // });
     res.json({ url: GatewayPageURL });
   });
 });
 
 handlePayment.post("/success", async (req, res, next) => {
   const { transactionId } = req.query;
-  const result = await ordersCollection.updateOne(
+  const date = new Date();
+  let day = date.getDate();
+  let month = date.getMonth() + 1;
+  let year = date.getFullYear();
+  let currentDate = `${day}-${month}-${year}`;
+  const result = await cartCollection.updateOne(
     { transactionId: transactionId },
     {
       $set: {
         paid: true,
+        paidAt: currentDate,
       },
     }
   );
-  console.log(result);
+
+  if (result.modifiedCount > 0) {
+    res.redirect(
+      `http://localhost:3000/payment/success?transactionId=${transactionId}`
+    );
+  }
 });
 
 module.exports = handlePayment;
