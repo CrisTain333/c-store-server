@@ -7,7 +7,7 @@ const is_live = false;
 handlePayment.get("/init", async (req, res) => {
   const id = req.body;
   console.log(id);
-  res.send("ok");
+  res.send({ id: id });
   // const data = {
   //   total_amount: 100,
   //   currency: "BDT",
