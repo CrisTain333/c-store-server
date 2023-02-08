@@ -9,9 +9,15 @@ const uri = "mongodb://localhost:27017";
 const client = new MongoClient(uri);
 const cartCollection = client.db("cStore").collection("cart");
 handlePayment.post("/init", async (req, res) => {
-  const { id } = req.body;
+  const { id, email } = req.body;
 
-  const userProduct = await cartCollection.findOne({ productId: id });
+  const userProduct = await cartCollection.findOne({
+    productId: id,
+    email: email,
+  });
+
+  const total = userProduct.productPrice * userProduct.productQuantity;
+  console.log(total);
   res.send({ product: userProduct });
   // const data = {
   //   total_amount: 100,
