@@ -8,6 +8,7 @@ const is_live = false;
 const uri = "mongodb://localhost:27017";
 const client = new MongoClient(uri);
 const cartCollection = client.db("cStore").collection("cart");
+const ordersCollection = client.db("cStore").collection("orders");
 const uniqid = require("uniqid");
 handlePayment.post("/init", async (req, res) => {
   const { id, email } = req.body;
@@ -18,11 +19,12 @@ handlePayment.post("/init", async (req, res) => {
   });
 
   const total = userProduct.productPrice * userProduct.productQuantity;
+  const transactionId = uniqid();
   const data = {
     total_amount: total,
     currency: "BDT",
-    tran_id: uniqid(), // use unique tran_id for each api call
-    success_url: "http://localhost:3030/success",
+    tran_id: transactionId, // use unique tran_id for each api call
+    success_url: `http://localhost:5000/payment/success?transactionId=${transactionId}`,
     fail_url: "http://localhost:3030/fail",
     cancel_url: "http://localhost:3030/cancel",
     ipn_url: "http://localhost:3030/ipn",
@@ -52,9 +54,27 @@ handlePayment.post("/init", async (req, res) => {
   sslcz.init(data).then((apiResponse) => {
     // Redirect the user to payment gateway
     let GatewayPageURL = apiResponse.GatewayPageURL;
+    ordersCollection.insertOne({
+      ...userProduct,
+      totalPrice: total,
+      transactionId,
+      paid: false,
+    });
     res.json({ url: GatewayPageURL });
-    console.log("Redirecting to: ", GatewayPageURL);
   });
+});
+
+handlePayment.post("/success", async (req, res, next) => {
+  const { transactionId } = req.query;
+  const result = await ordersCollection.updateOne(
+    { transactionId: transactionId },
+    {
+      $set: {
+        paid: true,
+      },
+    }
+  );
+  console.log(result);
 });
 
 module.exports = handlePayment;
