@@ -26,7 +26,6 @@ handleProducts.get("/category", async (req, res, next) => {
 handleProducts.get("/:category", async (req, res, next) => {
   try {
     const category = req.params.category;
-    console.log(category);
     let filter = {};
     if (category === "all") {
       const result = await productCollection
